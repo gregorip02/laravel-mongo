@@ -1,0 +1,53 @@
+version: "3.4"
+
+volumes:
+  app-data:
+    driver: local
+  app-code:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  app:
+    image: gregorip02/laravel-mongo-app
+    restart: always
+    env_file: .env
+    build: .
+    expose:
+      - "9000"
+    networks:
+      - "app-network"
+    volumes:
+      - app-code:/opt/app
+    environment:
+      DB_CONNECTION: mongodb_dns
+      MONGO_DNS_STR: "mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${MONGO_AUTH_DB}"
+  nginx:
+    image: gregorip02/nginx-php
+    restart: always
+    environment:
+      NGINX_HOST: "localhost"
+      NGINX_ROOT: "/opt/app/public"
+      NGINX_FASTCGI: "app:9000"
+    volumes:
+     - app-code:/opt/app:ro
+    ports:
+      - "8080:80"
+    networks:
+      - "app-network"
+    depends_on:
+      - "app"
+
+  mongodb:
+    image: mongo:3.6-xenial
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+    networks:
+      - "app-network"
+    volumes:
+      - app-data:/data/db
