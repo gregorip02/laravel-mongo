@@ -1,0 +1,24 @@
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+
+docker-build-master:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker build --pull -t "gregorip02/laravel-mongo-app:$LARAVEL_VERSION-estable" .
+    - docker push "gregorip02/laravel-mongo-app:$LARAVEL_VERSION-estable"
+  only:
+    - master
+
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker build --pull -t "gregorip02/laravel-mongo-app:$LARAVEL_VERSION-dev-$CI_COMMIT_SHORT_SHA" .
+    - docker push "gregorip02/laravel-mongo-app:$LARAVEL_VERSION-dev-$CI_COMMIT_SHORT_SHA"
+  except:
+    - master

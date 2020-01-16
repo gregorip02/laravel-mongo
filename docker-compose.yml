@@ -13,7 +13,7 @@ networks:
 services:
   app:
     image: gregorip02/laravel-mongo-app
-    restart: always
+    restart: unless-stopped
     env_file: .env
     build: .
     expose:
@@ -22,12 +22,10 @@ services:
       - "app-network"
     volumes:
       - app-code:/opt/app
-    environment:
-      DB_CONNECTION: mongodb_dns
-      MONGO_DNS_STR: "mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${MONGO_AUTH_DB}"
+
   nginx:
     image: gregorip02/nginx-php
-    restart: always
+    restart: unless-stopped
     environment:
       NGINX_HOST: "localhost"
       NGINX_ROOT: "/opt/app/public"
@@ -43,6 +41,7 @@ services:
 
   mongodb:
     image: mongo:3.6-xenial
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
