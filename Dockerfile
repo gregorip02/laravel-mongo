@@ -23,7 +23,7 @@ RUN find $WORKDIR/ -type d -exec chmod 755 "{}" \;
 RUN find $WORKDIR/ -type f -exec chmod 644 "{}" \;
 RUN chmod -R 777 $WORKDIR/storage $WORKDIR/bootstrap/cache
 
-# Change current user to www
+# Change current user to www-user
 USER www-user
 
 # Expose the fpm port

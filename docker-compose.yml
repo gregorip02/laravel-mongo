@@ -3,25 +3,25 @@ version: "3.4"
 volumes:
   app-data:
     driver: local
-  app-code:
-    driver: local
 
 networks:
   app-network:
     driver: bridge
 
 services:
-  app:
+  fpm:
     image: gregorip02/laravel-mongo-app
     restart: unless-stopped
-    env_file: .env
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     expose:
       - "9000"
     networks:
       - "app-network"
     volumes:
-      - app-code:/opt/app
+      - $PWD:/opt/app:rw
+    env_file: .env
 
   nginx:
     image: gregorip02/nginx-php
@@ -29,17 +29,17 @@ services:
     environment:
       NGINX_HOST: "localhost"
       NGINX_ROOT: "/opt/app/public"
-      NGINX_FASTCGI: "app:9000"
+      NGINX_FASTCGI: "fpm:9000"
     volumes:
-     - app-code:/opt/app:ro
+     - $PWD:/opt/app:ro
     ports:
       - "8080:80"
     networks:
       - "app-network"
     depends_on:
-      - "app"
+      - "fpm"
 
-  mongodb:
+  mongo:
     image: mongo:3.6-xenial
     restart: unless-stopped
     environment:
