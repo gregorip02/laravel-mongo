@@ -1,4 +1,4 @@
-FROM gregorip02/laravel-fpm:mongo
+FROM gregorip02/laravel-fpm:mongo-dev-ecbf7a34
 # Workdir app
 ENV WORKDIR /var/www/app
 WORKDIR $WORKDIR
