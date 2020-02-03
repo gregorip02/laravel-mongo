@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - $PWD:/opt/app
+      - $PWD:/var/www/app
       - $PWD/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "8080:80"
