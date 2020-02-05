@@ -16,5 +16,3 @@ RUN find $WORKDIR/ -type d -exec chmod 755 "{}" \; && \
     find $WORKDIR/ -type f -exec chmod 644 "{}" \; && \
     chmod -R 777 $WORKDIR/storage $WORKDIR/bootstrap/cache
 
-# Change current user to www-data
-USER www-data
